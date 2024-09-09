@@ -6,3 +6,11 @@ authors = ["Israel Bermudez Sepulveda <israel.bermudez@proton.me>"]
 license = "Apache-2.0"
 
 [dependencies]
+
+[dev-dependencies]
+criterion = { version = "0.5.1", features = ["html_reports"] }
+
+[[bench]]
+name = "bench_sanitize_number"
+harness = false
+
