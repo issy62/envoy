@@ -7,4 +7,6 @@ license = "Apache-2.0"
 
 [dependencies]
 finch = { path = "../finch" }
+serde = "1.0.208"
+sonic-rs = "0.3.11"
 
