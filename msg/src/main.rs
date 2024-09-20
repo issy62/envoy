@@ -16,16 +16,31 @@ fn main() {
 
     let mut conf = ConfigContext::default();
     match conf.load_config(config_path) {
-        Ok(_) => {
-            println!("Twilio SID: {}", conf.twilio.sid);
-            println!("Sentry DSN: {}", conf.sentry.dsn);
-            println!("Turso Database: {}", conf.turso.database);
-        }
+        Ok(_) => (),
         Err(e) => eprintln!("Error: {}", e),
     }
 
-    match normalize_number("1234567890123") {
-        Ok(r) => println!("Sanitized Number: {}", r),
-        Err(e) => eprintln!("Error: {}", e),
+    let guard = sentry::init((
+        conf.sentry.dsn.to_string(),
+        sentry::ClientOptions {
+            attach_stacktrace: true,
+            debug: conf.sentry.debug,
+            release: sentry::release_name!(),
+            ..Default::default()
+        },
+    ));
+
+    if !guard.is_enabled() {
+        eprintln!("Sentry is not enabled.");
     }
+
+    match normalize_number("+1(656)210-7212") {
+        Ok(r) => println!("Sanitized Number: {}", r),
+        Err(e) => {
+            sentry::capture_error(&e);
+            eprintln!("Error: {}", e)
+        }
+    }
+
+    guard.flush(Some(std::time::Duration::from_secs(4)));
 }
