@@ -1,0 +1,35 @@
+image: $CI_REGISTRY/wot/wot-fedora-rust:latest
+
+stages:
+  - build
+  - test
+  - production
+
+build-job:
+  stage: build
+  script:
+    - cargo build
+    - cargo build --release
+  artifacts:
+    name: test-runners
+    public: false
+    expire_in: 60 mins
+    paths:
+      - target/debug/msg
+      - target/release/msg
+
+test-app:
+  stage: test
+  script:
+    - cargo test
+    - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
+    - cp .secure_files/config.dev.json msg/config.dev.json
+    - cargo run -- --config-path msg/config.dev.json
+    - rm -rf .secure_files && rm -rf msg/config.dev.json
+
+run-release-job:
+  stage: production
+  script:
+    - cargo bench
+    - cargo bench
+
