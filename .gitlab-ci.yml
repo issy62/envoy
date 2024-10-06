@@ -1,35 +1,78 @@
 image: $CI_REGISTRY/wot/wot-fedora-rust:latest
 
-stages:
-  - build
-  - test
-  - production
+variables:
+  FF_USE_FASTZIP: "true"
+  CACHE_COMPRESSION_LEVEL: "fastest"
 
-build-job:
-  stage: build
+stages:
+  - building
+  - testing-benching
+  - deploying
+
+build-app:
+  stage: building
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: push
+    paths:
+      - target/
+      - registry/
   script:
     - cargo build
+    - cargo test --no-run
+    - cargo bench --no-run
     - cargo build --release
-  artifacts:
-    name: test-runners
-    public: false
-    expire_in: 60 mins
-    paths:
-      - target/debug/msg
-      - target/release/msg
+  after_script:
+    - rsync -a /usr/local/cargo/registry/ registry
 
 test-app:
-  stage: test
+  stage: testing-benching
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+    paths:
+      - target/
+      - registry/
+  dependencies:
+    - build-app
+  before_script:
+    - rsync -a registry/ /usr/local/cargo/registry/
   script:
     - cargo test
-    - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
-    - cp .secure_files/config.dev.json msg/config.dev.json
-    - cargo run -- --config-path msg/config.dev.json
-    - rm -rf .secure_files && rm -rf msg/config.dev.json
 
-run-release-job:
-  stage: production
+bench-app:
+  stage: testing-benching
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+    paths:
+      - target/
+      - registry/
+  dependencies:
+    - build-app
+  before_script:
+    - rsync -a registry/ /usr/local/cargo/registry/
   script:
     - cargo bench
-    - cargo bench
+
+run-release:
+  stage: deploying
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+    paths:
+      - target/
+      - registry/
+  dependencies:
+    - build-app
+    - test-app
+    - bench-app
+  before_script:
+    - rsync -a registry/ /usr/local/cargo/registry/
+    - curl -s https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer | bash
+    - cp .secure_files/config.dev.json msg/config.dev.json
+  script:
+    - cargo run -- --config-path msg/config.dev.json
+  after_script:
+    - rm -rf .secure_files && rm -rf msg/config.dev.json
 
