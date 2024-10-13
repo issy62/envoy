@@ -1,4 +1,4 @@
 [workspace]
-members = ["msg"]
+members = ["finch", "msg"]
 resolver = "2"
 
