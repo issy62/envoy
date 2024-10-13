@@ -2,3 +2,9 @@
 members = ["finch", "msg"]
 resolver = "2"
 
+[profile.release]
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = true
+
