@@ -6,4 +6,5 @@ authors = ["Israel Bermudez Sepulveda <israel.bermudez@proton.me>"]
 license = "Apache-2.0"
 
 [dependencies]
+finch = { path = "../finch" }
 
