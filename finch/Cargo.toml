@@ -1,0 +1,9 @@
+[package]
+name = "finch"
+version = "0.1.0"
+edition = "2021"
+authors = ["Israel Bermudez Sepulveda <israel.bermudez@proton.me>"]
+license = "Apache-2.0"
+
+[dependencies]
+
