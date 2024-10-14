@@ -1,0 +1,24 @@
+# Generated  by Cargo
+/target/
+
+# Backup files generate dy rustfmt
+**/*.rs.bk
+
+# MSVC debugging information
+*.pdb
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Mac Shit
+.DS_Store
+
+# Windows Shit
+Thumbs.db
+
+# rust-analyzer
+rust-analyzer.json
+
