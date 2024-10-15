@@ -1,0 +1,16 @@
+{
+    "sentry": {
+        "dsn": "#########DSN#########",
+        "debug": false
+    },
+    "twilio": {
+        "sid": "######SID###########",
+        "auth_token": "###AUTH_TOKEN#########",
+        "account_number": "+###########"
+    },
+    "turso": {
+        "database": "libsql://{DB-NAME}.turso.io",
+        "auth_token": "###AUTH_TOKEN######"
+    }
+}
+
