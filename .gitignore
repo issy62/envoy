@@ -22,3 +22,6 @@ Thumbs.db
 # rust-analyzer
 rust-analyzer.json
 
+# Project Json Config
+*.dev.json
+
