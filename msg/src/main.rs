@@ -1,10 +1,21 @@
+use clap::Parser;
 use finch::twilio::e164::*;
 use msg::config::*;
 
-fn main() {
-    let mut conf = ConfigContext::default();
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
+struct Flags {
+    #[arg(short, long, default_value = "config.json")]
+    config: Option<String>,
+}
 
-    match conf.load_config("/home/l0n353n7ry/Projects/envoy/msg/config.json") {
+fn main() {
+    let flags = Flags::parse();
+
+    let config_path = flags.config.as_deref().unwrap_or_default();
+
+    let mut conf = ConfigContext::default();
+    match conf.load_config(config_path) {
         Ok(_) => {
             println!("Twilio SID: {}", conf.twilio.sid);
             println!("Sentry DSN: {}", conf.sentry.dsn);
