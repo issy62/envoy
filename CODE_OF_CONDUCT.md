@@ -1,6 +1,6 @@
 # Code of Conduct
 
-- This is very simple be **DESCENT** and **TOLERANT** !
+- This is very simple be **DECENT** and **TOLERANT** !
 - Facts don't care about you feelings! If someone doesn't call you what you want to
   be called you have 3 options:
   1. Deal with it!
